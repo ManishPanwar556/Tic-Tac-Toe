@@ -1,0 +1,185 @@
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.View.OnClickListener
+import android.widget.Button
+import kotlinx.android.synthetic.main.activity_main.*
+
+class MainActivity : AppCompatActivity(),View.OnClickListener{
+
+    lateinit var board:Array<Array<Button>>
+    var boardstatus=Array(3){IntArray(3)}
+    var Player=true
+    var moves=0;
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        board= arrayOf(arrayOf(btn1,btn2,btn3),
+            arrayOf(btn4,btn5,btn6),
+            arrayOf(btn7,btn8,btn9))
+       for(i in board)
+       {
+           for(button in i)
+           {
+               button.setOnClickListener(this)
+           }
+       }
+        boardstatusinitialise()
+       res.setOnClickListener(OnClickListener {
+           boardstatusinitialise()
+           Player=true;
+           moves=0;
+       })
+
+    }
+    override fun onClick(v: View) {
+        when(v.id)
+        {
+            R.id.btn1->{
+                updatevalue(row=0,col=0,player=Player)
+
+            }
+            R.id.btn2->{
+                updatevalue(row=0,col=1,player=Player)
+            }
+            R.id.btn3->{
+                updatevalue(row=0,col=2,player=Player)
+
+            }
+            R.id.btn4->{
+                updatevalue(row=1,col=0,player=Player)
+
+            }
+            R.id.btn5->{
+                updatevalue(row=1,col=1,player=Player)
+
+            }
+            R.id.btn6->{
+                updatevalue(row=1,col=2,player=Player)
+
+            }R.id.btn7->{
+            updatevalue(row=2,col=0,player=Player)
+
+             }
+            R.id.btn8->{
+                updatevalue(row=2,col=1,player=Player)
+
+            }
+            R.id.btn9-> {
+                updatevalue(row = 2, col = 2, player = Player)
+
+            }
+
+
+        }
+        moves++;
+        Player=!Player
+        if(Player)
+        {
+            updateDisplay("Player X turns")
+        }
+        else{
+            updateDisplay("Player O turns")
+        }
+        if(moves==9)
+        {
+            updateDisplay("match drawn")
+        }
+        checkWinner()
+    }
+    private fun updateDisplay(text:String)
+    {
+        tv.setText(text.toString())
+        if(text.contains("Winner"))
+        {
+            disablebutton()
+        }
+
+    }
+    private fun disablebutton()
+    {
+        for(i in board)
+        {
+            for(button in i)
+            {
+                button.isEnabled=false
+            }
+        }
+    }
+    private fun boardstatusinitialise()
+    {
+        for(i in 0..2)
+        {
+            for(j in 0..2)
+            {
+                boardstatus[i][j]=-1
+            }
+        }
+        for(i in board)
+        {
+            for(button in i)
+            {
+                button.isEnabled=true
+                button.text=""
+            }
+        }
+        tv.setText("")
+    }
+    private fun updatevalue(row:Int,col:Int,player:Boolean)
+    {
+        var text=if(player)"X" else "O"
+        var value=if(player)1 else 0
+        boardstatus[row][col]=value;
+        board[row][col].setText(text.toString())
+        board[row][col].isEnabled=false
+
+    }
+    private fun checkWinner() {
+        //Horizontal Rows
+        for (i in 0..2) {
+            if (boardstatus[i][0] == boardstatus[i][1] && boardstatus[i][0] == boardstatus[i][2]) {
+                if (boardstatus[i][0] == 1) {
+                    updateDisplay("Player X Winner")
+                    break
+                } else if (boardstatus[i][0] == 0) {
+                    updateDisplay("Player O Winner")
+                    break
+                }
+            }
+        }
+
+
+        for (i in 0..2) {
+            if (boardstatus[0][i] == boardstatus[1][i] && boardstatus[0][i] == boardstatus[2][i]) {
+                if (boardstatus[0][i] == 1) {
+                    updateDisplay("Player X Winner")
+                    break
+                } else if (boardstatus[0][i] == 0) {
+                    updateDisplay("Player O Winner")
+                    break
+                }
+            }
+        }
+
+
+        if(boardstatus[0][0] == boardstatus[1][1] && boardstatus[0][0] == boardstatus[2][2]){
+            if (boardstatus[0][0] == 1) {
+                updateDisplay("Player X Winner")
+            } else if (boardstatus[0][0] == 0) {
+                updateDisplay("Player O Winner")
+            }
+        }
+
+        //Second Diagonal
+        if(boardstatus[0][2] == boardstatus[1][1] && boardstatus[0][2] == boardstatus[2][0]){
+            if (boardstatus[0][2] == 1) {
+                updateDisplay("Player X Winner")
+            } else if (boardstatus[0][2] == 0) {
+                updateDisplay("Player O Winner")
+            }
+        }
+
+    }
+
+}
